@@ -6,6 +6,13 @@ Traditionally, Tailscale only supports connecting to one login server, requiring
 
 Once a context is launched, it can be used and configured as any other Tailscale connection, though the `tailscale` command.
 
+## Install
+
+```shell
+# Install from HEAD
+$ pip install --force-reinstall git+https://github.com/apognu/tailctx.git
+```
+
 ## Usage
 
 ```shell

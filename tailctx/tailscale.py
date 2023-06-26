@@ -5,7 +5,7 @@ import subprocess
 
 from os import path
 
-from tailctx.util.display import info
+from tailctx.util.display import info, fatal
 from tailctx.util.sock import SnapdAdapter
 
 CONTEXTS_PATH = path.expanduser("~/.local/state/tailscale")
@@ -72,6 +72,9 @@ def status():
 
 
 def start(context):
+    if status().state:
+        fatal("tailscale is already up")
+
     if os.path.isdir(f"{CONTEXTS_PATH}/{context}"):
         info(f"using existing tailscale context `{context}`")
     else:
@@ -84,14 +87,18 @@ def start(context):
     cmd = [
         "/usr/sbin/tailscaled",
         f"--state={CONTEXTS_PATH}/{context}/tailscaled.state",
+        f"--statedir={CONTEXTS_PATH}/{context}",
         f"--socket={SOCKET_PATH}/tailscaled.sock",
         "--port=41641",
     ]
 
-    subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
 
 
 def stop():
+    if not status().state:
+        fatal("tailscale is not running")
+
     info("stopping tailscale")
 
     subprocess.Popen(["/usr/bin/pkill", "tailscaled"])

@@ -1,0 +1,45 @@
+[tool.poetry]
+name = "tailctx"
+version = "0.6.1"
+
+description = "Tailscale Context Manager"
+authors = ["Antoine POPINEAU <antoine@popineau.eu>"]
+license = "MIT"
+
+repository = "https://github.com/apognu/tailctx"
+readme = "README.md"
+classifiers = [
+  "Topic :: Security",
+  "Topic :: Utilities"
+]
+keywords = []
+
+packages = [
+  { include = "tailctx/**/*.py" }
+]
+
+[tool.poetry.dependencies]
+python = ">=3.9"
+prettytable = "^3.3.0"
+requests = "^2.28.2"
+termcolor = "^1.1.0"
+
+[tool.poetry.dev-dependencies]
+black = "^22.3.0"
+
+[tool.poetry.scripts]
+tailctx = "tailctx.tailctx:main"
+
+[tool.black]
+line-length = 200
+
+[tool.mypy]
+exclude = [".venv/", "tests/"]
+strict = true
+warn_no_return = false
+install_types = true
+non_interactive = true
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

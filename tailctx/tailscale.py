@@ -1,79 +1,29 @@
-import json
 import os
-import requests
 import subprocess
 
 from os import path
+from tailscale_localapi import TailscaleAPI, TailscaleException
 
 from tailctx.util.display import info, fatal
-from tailctx.util.sock import SnapdAdapter
 
 CONTEXTS_PATH = path.expanduser("~/.local/state/tailscale")
 STATE_PATH = "/var/lib/tailscale"
 SOCKET_PATH = "/var/run/tailscale"
 
 
-session = requests.Session()
-session.mount("http://ts/", SnapdAdapter())
-
-
-class Status:
-    def __init__(self, payload):
-        self.state = payload["BackendState"] == "Running"
-        self.hostname = None
-        self.ip_address = None
-        self.dns_name = None
-        self.hosts = {}
-
-        if self.state:
-            self.hostname = payload["Self"]["HostName"]
-            self.ip_address = payload["TailscaleIPs"][0]
-            self.dns_name = payload["Self"]["DNSName"]
-            self.hosts = payload["Peer"]
-
-    @classmethod
-    def offline(cls):
-        return Status({"BackendState": "offline"})
-
-
-def prefs():
-    try:
-        response = session.get("http://ts/localapi/v0/prefs")
-
-        if response.status_code != 200:
-            return None
-        else:
-            return response.json()
-    except:
-        return None
-
-
-def set_prefs(prefs):
-    response = session.patch("http://ts/localapi/v0/prefs", data=json.dumps(prefs))
-
-    if response.status_code == 200:
-        return True
-    else:
-        return False
-
-
-def status():
-    try:
-        response = session.get("http://ts/localapi/v0/status")
-
-        if response.status_code != 200:
-            status = Status.offline()
-        else:
-            status = Status(response.json())
-    except:
-        status = Status.offline()
-
-    return status
+def client():
+    return TailscaleAPI.v0()
 
 
 def start(context):
-    if status().state:
-        fatal("tailscale is already up")
+    if os.geteuid() != 0:
+        fatal("should be run as root")
+
+    try:
+        if client().is_connected():
+            fatal("tailscale is already up")
+    except TailscaleException:
+        pass
 
     if os.path.isdir(f"{CONTEXTS_PATH}/{context}"):
         info(f"using existing tailscale context `{context}`")
@@ -96,6 +46,9 @@ def start(context):
 
 
 def stop():
+    if os.geteuid() != 0:
+        fatal("should be run as root")
+
     info("stopping tailscale")
 
     subprocess.Popen(["/usr/bin/pkill", "tailscaled"])

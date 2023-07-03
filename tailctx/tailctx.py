@@ -19,6 +19,8 @@ def main(args: Optional[List[str]] = None) -> None:
         commands.connect.stop()
     elif cli.command == "status":
         commands.status.status()
+    elif cli.command == "context":
+        commands.status.context()
     elif cli.command == "exit":
         commands.config.exit(cli.set, cli.unset)
     else:
@@ -34,8 +36,8 @@ def parse_args(args: Optional[List[str]]) -> Namespace:
     cmd_start.add_argument("context", metavar="CONTEXT")
 
     commands.add_parser("stop", aliases=["down", "disconnect"], help="disconnect from a tailscale context")
-
     commands.add_parser("status", help="get connection status")
+    commands.add_parser("context", help="print current context")
 
     cmd_exit = commands.add_parser("exit", help="set exit node")
     cmd_exit.add_argument("-u", "--unset", action="store_true", help="unset the exit node")

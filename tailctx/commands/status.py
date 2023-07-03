@@ -1,3 +1,5 @@
+import sys
+
 from tailctx import tailscale
 from tailctx.util.display import create_table
 from tailctx.util import colors
@@ -8,6 +10,8 @@ def status():
 
     if not status.state:
         print(colors.key_value("State", colors.red("disconnected")))
+
+        sys.exit(1)
     else:
         print(colors.key_value("State", colors.green("connected")))
         print(colors.key_value("Context", tailscale.get_current_context()))
@@ -37,3 +41,7 @@ def status():
         print(colors.bold("Hosts:"))
         print()
         print(table)
+
+
+def context():
+    print(tailscale.get_current_context())

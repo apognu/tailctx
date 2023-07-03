@@ -96,9 +96,6 @@ def start(context):
 
 
 def stop():
-    if not status().state:
-        fatal("tailscale is not running")
-
     info("stopping tailscale")
 
     subprocess.Popen(["/usr/bin/pkill", "tailscaled"])

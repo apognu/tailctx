@@ -8,21 +8,16 @@ license = "MIT"
 
 repository = "https://github.com/apognu/tailctx"
 readme = "README.md"
-classifiers = [
-  "Topic :: Security",
-  "Topic :: Utilities"
-]
+classifiers = ["Topic :: Security", "Topic :: Utilities"]
 keywords = []
 
-packages = [
-  { include = "tailctx/**/*.py" }
-]
+packages = [{ include = "tailctx/**/*.py" }]
 
 [tool.poetry.dependencies]
 python = ">=3.10,<4.0"
 prettytable = "^3.3.0"
 termcolor = "^1.1.0"
-tailscale-localapi = "^0.3.0"
+tailscale-localapi = "^0.4.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"

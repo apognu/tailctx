@@ -22,7 +22,7 @@ def main(args: Optional[List[str]] = None) -> None:
     elif cli.command == "context":
         commands.status.context()
     elif cli.command == "exit":
-        commands.config.exit(cli.set, cli.unset)
+        commands.config.exit(cli.set, cli.lan, cli.unset)
     else:
         fatal(f"unknown command: `{cli.command}`")
 
@@ -42,5 +42,6 @@ def parse_args(args: Optional[List[str]]) -> Namespace:
     cmd_exit = commands.add_parser("exit", help="set exit node")
     cmd_exit.add_argument("-u", "--unset", action="store_true", help="unset the exit node")
     cmd_exit.add_argument("-s", "--set", type=str, metavar="NODE")
+    cmd_exit.add_argument("--lan", action="store_true", help="allow LAN access when exit node is used")
 
     return cli.parse_args(args)

@@ -1,5 +1,6 @@
 import os
 import subprocess
+import time
 
 from os import path
 from tailscale_localapi import TailscaleAPI, TailscaleException
@@ -42,12 +43,40 @@ def start(context):
         "--port=41641",
     ]
 
+    info("starting tailscaled")
+
     subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+
+    info("waiting for tailscaled socket to come up")
+
+    deadline = time.time() + 10
+
+    while True:
+        if time.time() > deadline:
+            fatal("could not connect to tailscale: deadline exceeded")
+
+        if os.path.exists(f"{SOCKET_PATH}/tailscaled.sock"):
+            break
+
+    try:
+        client().connect()
+
+        info("tailscale is up")
+    except TailscaleException:
+        fatal("could not connect to tailscale")
 
 
 def stop():
     if os.geteuid() != 0:
         fatal("should be run as root")
+
+    try:
+        if client().is_connected():
+            client().disconnect()
+
+            info("tailscale is disconnected")
+    except TailscaleException:
+        pass
 
     info("stopping tailscale")
 

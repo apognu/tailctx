@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tailctx"
-version = "0.7.0"
+version = "0.8.0"
 
 description = "Tailscale Context Manager"
 authors = ["Antoine POPINEAU <antoine@popineau.eu>"]
@@ -17,7 +17,7 @@ packages = [{ include = "tailctx/**/*.py" }]
 python = ">=3.10,<4.0"
 prettytable = "^3.3.0"
 termcolor = "^1.1.0"
-tailscale-localapi = "^0.4.0"
+tailscale-localapi = "^0.5.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"
